@@ -67,9 +67,12 @@ Author: Satwik Singh
 
 			}
 
-			@supports not (backdrop-filter: blur(10px)) {
+			/* Fallback for browsers that do not support backdrop-filter or -webkit-backdrop-filter */
+			@supports not ((backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px))) {
 				.notification {
-					background: rgba(246, 246, 246, 0.95);
+					background: rgba(246, 246, 246, 0.95); /* More opaque background */
+					-webkit-backdrop-filter: none; /* Ensure no partial blur attempt */
+					backdrop-filter: none;         /* Ensure no partial blur attempt */
 				}
 			}
 
