@@ -1,13 +1,13 @@
 # Using my existing Route53 zone
 data "aws_route53_zone" "main" {
-  name = "ssatwik.click"
+  name = "satwik.in"
   private_zone = false
 }
 
 
 resource "aws_route53_record" "resume" {
   zone_id = data.aws_route53_zone.main.zone_id
-  name    = "terraformed-resume.ssatwik.click"
+  name    = "terraformed-resume.satwik.in"
   type    = "A"
 
   alias {

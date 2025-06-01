@@ -6,7 +6,7 @@ In this project I developed and deployed a full-stack portfolio website utilizin
 
 The entire infrastructure is also defined and managed via Terraform.
 
-View [resume.ssatwik.click](https://resume.ssatwik.click) or [terraformed-resume.ssatwik.click](https://terraformed-resume.ssatwik.click) for the terraformed version
+View [resume.satwik.in](https://resume.satwik.in) or [terraformed-resume.satwik.in](https://terraformed-resume.satwik.in) for the terraformed version
 
 ## Technologies and Tools
 

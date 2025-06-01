@@ -35,7 +35,7 @@ resource "aws_cloudfront_distribution" "website" {
   }
 
   # Custom domain name
-  aliases = ["terraformed-resume.ssatwik.click"]
+  aliases = ["terraformed-resume.satwik.in"]
 
   # SSL certificate
   viewer_certificate {
