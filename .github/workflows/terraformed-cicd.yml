@@ -43,6 +43,23 @@ jobs:
       - name: Terraform Plan
         run: terraform plan
 
+      - name: Import existing Route53 record if needed
+        run: |
+          # Check if Route53 record exists in state
+          if ! terraform state show aws_route53_record.resume &>/dev/null 2>&1; then
+            echo "Route53 record not in state, attempting to import..."
+            # Get zone ID from AWS (Route53 import format: ZONE_ID_RECORD_NAME_RECORD_TYPE)
+            ZONE_ID=$(aws route53 list-hosted-zones-by-name --dns-name satwik.in --query "HostedZones[0].Id" --output text 2>/dev/null | sed 's|/hostedzone/||' || echo "")
+            if [ -n "$ZONE_ID" ] && [ "$ZONE_ID" != "None" ]; then
+              terraform import aws_route53_record.resume "${ZONE_ID}_terraformed-resume.satwik.in_A" || echo "Import failed - record may not exist or format incorrect, will attempt creation"
+            else
+              echo "Could not determine zone ID, skipping import"
+            fi
+          else
+            echo "Route53 record already in Terraform state"
+          fi
+        continue-on-error: true
+
       - name: Terraform Apply
         run: terraform apply -auto-approve
 
