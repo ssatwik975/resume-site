@@ -98,3 +98,30 @@ resource "aws_lambda_function_url" "url1" {
   depends_on = [aws_lambda_function.cloud-resume-func-but-terraformed]
 }
 
+# Add Lambda Permission for Function URL (required for new authorization model)
+# AWS now requires both lambda:InvokeFunctionUrl AND lambda:InvokeFunction permissions.
+# The aws_lambda_function_url resource with authorization_type = "NONE" automatically
+# grants lambda:InvokeFunctionUrl. This resource explicitly adds lambda:InvokeFunction.
+# Conditions restrict this permission to only apply when invoked via the function URL.
+# See: https://docs.aws.amazon.com/lambda/latest/dg/urls-auth.html
+resource "aws_lambda_permission" "function_url_permission" {
+  statement_id  = "AllowFunctionUrlPublicInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.cloud-resume-func-but-terraformed.function_name
+  principal     = "*"
+
+  # Restrict permission to only function URL invocations with authorization_type = NONE
+  condition {
+    test     = "StringEquals"
+    variable = "lambda:InvokedViaFunctionUrl"
+    values   = ["true"]
+  }
+  condition {
+    test     = "StringEquals"
+    variable = "lambda:FunctionUrlAuthType"
+    values   = ["NONE"]
+  }
+
+  depends_on = [aws_lambda_function_url.url1]
+}
+
