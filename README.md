@@ -4,14 +4,16 @@
 
 In this project I developed and deployed a full-stack portfolio website utilizing various AWS services to ensure a secure and scalable solution. The resume website features a JavaScript visitor counter storing data on a DynamoDB database, that is accessed and updated via an API endpoint I made through API-Gateway and AWS Lambda function written in Python. The web assets are stored inside an S3 bucket, which is served via CloudFront distributions with DNS management done through my Route53 hosted zones. 
 
-The entire infrastructure is also defined and managed via Terraform.
+I initially set up a manual deployment (`resume.satwik.in`), and later created a fully automated Terraform-managed version (`terraformed-resume.satwik.in`) to demonstrate Infrastructure as Code practices. Both deployments share the same frontend codebase but have independent backend infrastructure.
 
-View [resume.satwik.in](https://resume.satwik.in) or [terraformed-resume.satwik.in](https://terraformed-resume.satwik.in) for the terraformed version
+The entire infrastructure is also defined and managed via Terraform for the terraformed version.
+
+View [resume.satwik.in](https://resume.satwik.in) (standard version) or [terraformed-resume.satwik.in](https://terraformed-resume.satwik.in) for the terraformed version
 
 ## Technologies and Tools
 
 - **JavaScript**
-- **JQuery**
+- **jQuery**
 - **AWS S3**
 - **AWS CloudFront**
 - **AWS Route 53**
@@ -26,38 +28,47 @@ View [resume.satwik.in](https://resume.satwik.in) or [terraformed-resume.satwik.
 
 1. **Static Website Hosting with AWS S3:**
    - Deployed the portfolio website on AWS S3 buckets.
-   - Configured bucket policies for public read access.
-   - Utilized versioning and lifecycle policies for efficient storage management.
+   - Configured CloudFront Origin Access Control (OAC) to secure bucket access (bucket is not publicly accessible).
+   - Automated file uploads via Terraform for the terraformed version.
 
 2. **Secure Content Delivery with AWS CloudFront:**
    - Set up CloudFront to distribute the content globally with low latency.
-   - Configured HTTPS for secure data transmission.
+   - Configured HTTPS for secure data transmission using ACM certificates.
    - Implemented custom caching policies to improve performance.
 
-3. **Custom Domain with AWS Route 53:**
-   - Registered and managed a custom domain using Route 53.
-   - Configured DNS records to route traffic to the CloudFront distribution.
+3. **Custom Domain Configuration:**
+   - Domain registered at Hostinger (`satwik.in`).
+   - Configured DNS records in Route 53 to point to CloudFront distributions.
+   - Both subdomains (`resume.satwik.in` and `terraformed-resume.satwik.in`) route to their respective CloudFront distributions.
 
 4. **Visitor Counter:**
    - Developed a JavaScript-based visitor counter displayed on the website.
    - Visitor data is stored in DynamoDB.
    - Implemented a RESTful API using AWS API Gateway and Lambda functions to interface with the DynamoDB table.
    - Used the `boto3` library in Python for seamless integration with DynamoDB.
+   - Also configured Lambda Function URLs as an alternative access method.
 
 5. **Continuous Integration and Deployment (CI/CD):**
    - Utilized GitHub Actions to automate the deployment process.
    - Configured workflows to automate cache invalidation and deployment to S3.
-   - Ensured robust deployment by running Python tests for Lambda functions.
+   - For the terraformed version, the pipeline automatically deploys the entire infrastructure via Terraform on every push.
 
 6. **Security and Best Practices:**
    - Ensured AWS credentials were securely managed and excluded from source control.
-   - Implemented tests and monitoring to maintain functionality and security.
+   - Implemented CloudFront OAC to prevent direct S3 bucket access.
+   - Configured IAM roles with least-privilege policies.
+   - Set up proper CORS headers for API endpoints.
 
 ## Architecture 
+
 ![Architecture Diagram](https://github.com/user-attachments/assets/d0905155-96c3-4cc9-b497-c4ae474c8224)
 
+The project features two parallel deployments:
 
+- **Standard Version (`resume.satwik.in`):** Initially created manually through AWS Console, now uses CI/CD for frontend deployments.
+- **Terraformed Version (`terraformed-resume.satwik.in`):** Fully automated Infrastructure as Code deployment using Terraform, with remote state management (S3 + DynamoDB locking).
 
+Both versions use the same frontend codebase but have separate backend infrastructure (DynamoDB tables, Lambda functions, API Gateways).
 
 ## Getting Started
 
@@ -71,7 +82,7 @@ View [resume.satwik.in](https://resume.satwik.in) or [terraformed-resume.satwik.
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/s000ik/resume-site.git
+   git clone https://github.com/ssatwik975/resume-site.git
    cd resume-site
    ```
 
